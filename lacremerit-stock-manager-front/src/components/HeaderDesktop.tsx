@@ -1,27 +1,35 @@
 import { useState, useEffect } from "react";
-import { FaHome, FaBox, FaIndustry, FaChartBar, FaClipboardList } from "react-icons/fa";
+import { FaHome, FaBox, FaIndustry, FaChartBar, FaClipboardList, FaShoppingCart, FaUserFriends } from "react-icons/fa";
 
+// Navigation items with corresponding icons, labels, and links
 const navItems = [
   { icon: <FaHome />, label: "Accueil", href: "/home" },
   { icon: <FaBox />, label: "Produits", href: "/products" },
+  { icon: <FaUserFriends />, label: "Client·es professionnel·les", href: "/clients" },
   { icon: <FaIndustry />, label: "Producteurices", href: "/producers" },
-  { icon: <FaChartBar />, label: "Historique", href: "/products" },
-  { icon: <FaClipboardList />, label: "Inventaire", href: "/products" },
+  { icon: <FaChartBar />, label: "Historique", href: "/history" },
+  { icon: <FaClipboardList />, label: "Inventaire", href: "/inventory" },
+  { icon: <FaShoppingCart />, label: "Commandes", href: "/orders" },
 ];
 
 export default function HeaderDesktop() {
+  // State to check if the window has been scrolled more than 50px
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    // Handler to update isScrolled state based on scroll position
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
+    // Add scroll event listener
     window.addEventListener("scroll", handleScroll);
+    // Remove scroll event listener on unmount
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <div
+      // Apply different layout classes based on the scroll state
       className={`hidden md:flex ${
         isScrolled
           ? "flex-col fixed left-0 top-0 h-full w-56 p-4 bg-white shadow-md z-40"
@@ -30,21 +38,31 @@ export default function HeaderDesktop() {
     >
       {isScrolled ? (
         <>
+          {/* Title for sidebar view */}
           <h2 className="text-xl font-bold mb-6">La Crème Rit</h2>
           <nav className="flex flex-col gap-4">
             {navItems.map((item, index) => (
-              <a key={index} href={item.href} className="flex items-center gap-2 text-gray-700 hover:text-black font-medium">
+              <a
+                key={index}
+                href={item.href}
+                className="flex items-center gap-2 text-gray-700 hover:text-black font-medium"
+              >
                 {item.icon} {item.label}
               </a>
             ))}
           </nav>
         </>
       ) : (
+        // Header view for non-scrolled state
         <div className="w-full flex justify-between items-center h-full">
           <h1 className="text-xl font-bold">La Crème Rit</h1>
           <nav className="flex gap-6">
             {navItems.map((item, index) => (
-              <a key={index} href={item.href} className="flex items-center gap-1 text-gray-700 hover:text-black font-medium">
+              <a
+                key={index}
+                href={item.href}
+                className="flex items-center gap-1 text-gray-700 hover:text-black font-medium"
+              >
                 {item.icon} {item.label}
               </a>
             ))}

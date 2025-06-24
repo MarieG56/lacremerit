@@ -4,11 +4,9 @@
 /* Tailwind CSS */
 @import "tailwindcss";
 
-/* Logo Font */
-@font-face {
-    font-family: "slopes";
-    src: url("./fonts/Slopes.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+@theme {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1280px;
 }

@@ -1,61 +1,61 @@
 import { useState } from "react";
-import { postProducer } from "../api/producerApi";
+import { postClient } from "../api/clientApi";
 
-interface AddProducerModalProps {
+interface AddClientModalProps {
     open: boolean;
     onClose: () => void;
     onSuccess?: () => void;
 }
 
-export default function AddProducerModal({ open, onClose, onSuccess }: AddProducerModalProps) {
+export default function AddClientModal({ open, onClose, onSuccess }: AddClientModalProps) {
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
     const [email, setEmail] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Reset all form fields and clear error state
+    // Reset form fields and error state
     const resetForm = () => {
         setName("");
         setAddress("");
         setEmail("");
-        setPhoneNumber("");
+        setPhone("");
         setError(null);
     };
 
-    // Handle form submission to add a new producer
+    // Handle form submission to add a new client
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         try {
-            await postProducer({
+            await postClient({
                 name,
                 address: address || undefined,
                 email: email || undefined,
-                phoneNumber: phoneNumber || undefined,
+                phoneNumber: phone || undefined,
             });
             resetForm();
             if (onSuccess) onSuccess();
             onClose();
         } catch (err) {
-            setError("Erreur lors de l'ajout du/de la producteurice.");
+            setError("Erreur lors de l'ajout du·de la client·e.");
         } finally {
             setLoading(false);
         }
     };
 
-    // Do not render the modal if it's not open
+    // Do not render the modal if it is not open
     if (!open) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-auto">
-                {/* Modal Title */}
-                <h2 className="text-xl font-bold mb-4">Ajouter un·e producteurice</h2>
+                {/* Modal title */}
+                <h2 className="text-xl font-bold mb-4">Ajouter un·e client·e</h2>
                 <form onSubmit={handleSubmit}>
-                    {/* Name Input */}
+                    {/* Client Name Input */}
                     <div className="mb-4">
                         <label className="block">Nom</label>
                         <input
@@ -67,7 +67,7 @@ export default function AddProducerModal({ open, onClose, onSuccess }: AddProduc
                             disabled={loading}
                         />
                     </div>
-                    {/* Address Input */}
+                    {/* Client Address Input */}
                     <div className="mb-4">
                         <label className="block">Adresse</label>
                         <input
@@ -78,7 +78,7 @@ export default function AddProducerModal({ open, onClose, onSuccess }: AddProduc
                             disabled={loading}
                         />
                     </div>
-                    {/* Email Input */}
+                    {/* Client Email Input */}
                     <div className="mb-4">
                         <label className="block">Email</label>
                         <input
@@ -89,39 +89,36 @@ export default function AddProducerModal({ open, onClose, onSuccess }: AddProduc
                             disabled={loading}
                         />
                     </div>
-                    {/* Phone Number Input */}
+                    {/* Client Phone Input */}
                     <div className="mb-4">
                         <label className="block">Téléphone</label>
                         <input
-                            type="text"
+                            type="tel"
                             className="w-full p-2 border border-gray-300 rounded"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                             disabled={loading}
                         />
                     </div>
-                    {/* Display error message if exists */}
-                    {error && <div className="text-red-600 mb-2">{error}</div>}
-                    <div className="flex justify-center gap-2 mt-4">
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            className="bg-green-600 text-white p-2 rounded"
-                            disabled={loading}
-                        >
-                            Ajouter
-                        </button>
-                        {/* Close Button */}
+                    {/* Display error message if any */}
+                    {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+                    <div className="flex justify-end">
+                        {/* Cancel button */}
                         <button
                             type="button"
-                            className="bg-gray-300 text-black p-2 rounded"
-                            onClick={() => {
-                                onClose();
-                                resetForm();
-                            }}
+                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2"
+                            onClick={onClose}
                             disabled={loading}
                         >
-                            Fermer
+                            Annuler
+                        </button>
+                        {/* Submit button */}
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white px-4 py-2 rounded"
+                            disabled={loading}
+                        >
+                            {loading ? "Chargement..." : "Ajouter le·la client·e"}
                         </button>
                     </div>
                 </form>

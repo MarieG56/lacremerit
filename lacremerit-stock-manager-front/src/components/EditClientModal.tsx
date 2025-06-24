@@ -1,48 +1,45 @@
 import { useState, useEffect } from "react";
-import { Producer, updateProducer, deleteProducer } from "../api/producerApi";
+import { Client, updateClient, deleteClient } from "../api/clientApi";
 
-export default function EditProducerModal({
-    producer,
+export default function EditClientModal({
+    client,
     isOpen,
     onClose,
     onSuccess,
 }: {
-    producer: Producer | null;
+    client: Client | null;
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
 }) {
-    // Local state for form data, loading status and error message
-    const [form, setForm] = useState<Partial<Producer>>({});
+    // Local state for form data, loading status and errors
+    const [form, setForm] = useState<Partial<Client>>({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Initialize form when producer or modal open state changes
+    // Initialize form when client or modal open changes
     useEffect(() => {
-        if (producer) {
+        if (client) {
             setForm({
-                name: producer.name,
-                address: producer.address || "",
-                email: producer.email || "",
-                phoneNumber: producer.phoneNumber || "",
+                name: client.name,
+                address: client.address || "",
+                email: client.email || "",
+                phoneNumber: client.phoneNumber || "",
             });
             setError(null);
         }
-    }, [producer, isOpen]);
+    }, [client, isOpen]);
 
-    // Do not render the modal if it's closed or no producer is provided
-    if (!isOpen || !producer) return null;
+    // Do not render the modal if it is not open or client is null
+    if (!isOpen || !client) return null;
 
     // Update form state on input change
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    // Handle form submission for updating producer information
+    // Handle form submission for updating client information
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -54,14 +51,12 @@ export default function EditProducerModal({
                 email: form.email?.trim() || undefined,
                 phoneNumber: form.phoneNumber?.trim() || undefined,
             };
-            // Validate that name is not empty
             if (!body.name) {
                 setError("Le nom est obligatoire.");
                 setLoading(false);
                 return;
             }
-            // Update the producer with new data
-            await updateProducer(Number(producer.id), body);
+            await updateClient(Number(client.id), body);
             setLoading(false);
             onSuccess();
             onClose();
@@ -71,13 +66,13 @@ export default function EditProducerModal({
         }
     };
 
-    // Handle deleting the producer after confirmation
+    // Handle deletion of the client after confirmation
     const handleDelete = async () => {
-        if (!window.confirm("Supprimer ce·tte producteurice ?")) return;
+        if (!window.confirm("Supprimer ce·tte client·e ?")) return;
         setLoading(true);
         setError(null);
         try {
-            await deleteProducer(Number(producer.id));
+            await deleteClient(Number(client.id));
             setLoading(false);
             onSuccess();
             onClose();
@@ -91,9 +86,9 @@ export default function EditProducerModal({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-auto">
                 {/* Modal Header */}
-                <h2 className="text-xl font-bold mb-4">Modifier le·la producteurice</h2>
+                <h2 className="text-xl font-bold mb-4">Modifier le·la client·e</h2>
                 <form onSubmit={handleSubmit}>
-                    {/* Name Input */}
+                    {/* Name Field */}
                     <div className="mb-4">
                         <label className="block">Nom</label>
                         <input
@@ -106,7 +101,7 @@ export default function EditProducerModal({
                             disabled={loading}
                         />
                     </div>
-                    {/* Address Input */}
+                    {/* Address Field */}
                     <div className="mb-4">
                         <label className="block">Adresse</label>
                         <input
@@ -118,7 +113,7 @@ export default function EditProducerModal({
                             disabled={loading}
                         />
                     </div>
-                    {/* Email Input */}
+                    {/* Email Field */}
                     <div className="mb-4">
                         <label className="block">Email</label>
                         <input
@@ -130,7 +125,7 @@ export default function EditProducerModal({
                             disabled={loading}
                         />
                     </div>
-                    {/* Phone Number Input */}
+                    {/* Phone Number Field */}
                     <div className="mb-4">
                         <label className="block">Téléphone</label>
                         <input
@@ -142,10 +137,8 @@ export default function EditProducerModal({
                             disabled={loading}
                         />
                     </div>
-                    {/* Display error if exists */}
-                    {error && (
-                        <div className="text-red-600 mb-2">{error}</div>
-                    )}
+                    {/* Display error message if present */}
+                    {error && <div className="text-red-600 mb-2">{error}</div>}
                     <div className="flex justify-between gap-2 mt-4">
                         {/* Delete Button */}
                         <button

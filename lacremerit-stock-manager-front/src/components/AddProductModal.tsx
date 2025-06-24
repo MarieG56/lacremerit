@@ -1,32 +1,29 @@
 import { useState, useEffect } from "react";
-import { postProduct, Product } from "../api/productApi"; 
-import { getAllCategories } from "../api/categoryApi"; 
-import { getAllProducers } from "../api/producerApi"; 
-import { getAllSubcategories } from "../api/subcategoryApi"; 
+import { postProduct, Product, Unit } from "../api/productApi";
+import { getAllCategories } from "../api/categoryApi";
+import { getAllProducers } from "../api/producerApi";
+import { getAllSubcategories } from "../api/subcategoryApi";
 
 interface AddProductModalProps {
+    open: boolean;
+    onClose: () => void;
     onSuccess: (newProduct: Product) => void;
 }
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
-    const [isOpen, setIsOpen] = useState(false);
+export default function AddProductModal({ open, onClose, onSuccess }: AddProductModalProps) {
+    // Local state for form fields and fetched data
     const [productName, setProductName] = useState("");
-    const [description, setDescription] = useState(""); 
+    const [description, setDescription] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [subcategoryId, setSubcategoryId] = useState("");
     const [producerId, setProducerId] = useState("");
-    const [unit, setUnit] = useState("KG");
+    const [unit, setUnit] = useState<Unit>("KG");
     const [isActive, setIsActive] = useState(true);
-    const [categories, setCategories] = useState<
-        { id: number; name: string }[]
-    >([]);
-    const [subcategories, setSubcategories] = useState<
-        { id: number; name: string; categoryId: number }[]
-    >([]);
-    const [producers, setProducers] = useState<{ id: number; name: string }[]>(
-        []
-    );
+    const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+    const [subcategories, setSubcategories] = useState<{ id: number; name: string; categoryId: number }[]>([]);
+    const [producers, setProducers] = useState<{ id: number; name: string }[]>([]);
 
+    // Fetch categories, subcategories and producers on mount
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -36,10 +33,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
                         getAllSubcategories(),
                         getAllProducers(),
                     ]);
-                // Trie les catégories et producteurs par ordre alphabétique
+                // Sort categories alphabetically
                 const sortedCategories = (categoriesRes?.data || []).sort((a: { name: string }, b: { name: string }) =>
                     a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
                 );
+                // Sort producers alphabetically
                 const sortedProducers = (producersRes?.data || []).sort((a: { name: string }, b: { name: string }) =>
                     a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
                 );
@@ -47,16 +45,17 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
                 setSubcategories(subcategoriesRes?.data || []);
                 setProducers(sortedProducers);
             } catch (error) {
+                // Log error if fetching fails
                 console.error(
-                    "Erreur lors du chargement des catégories, sous-catégories et producteurs",
+                    "Error loading categories, subcategories and producers",
                     error
                 );
             }
         };
-
         fetchData();
     }, []);
 
+    // Reset the form fields to their initial values
     const resetForm = () => {
         setProductName("");
         setDescription("");
@@ -67,104 +66,86 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
         setIsActive(true);
     };
 
+    // Submit handler to post a new product
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const payload = {
             name: productName,
-            description: description || undefined, 
-            categoryId: Number(categoryId), 
-            subcategoryId: subcategoryId ? Number(subcategoryId) : undefined, 
-            producerId: Number(producerId), 
-            unit,
+            description: description || undefined,
+            categoryId: Number(categoryId),
+            subcategoryId: subcategoryId ? Number(subcategoryId) : undefined,
+            producerId: Number(producerId),
+            unit: unit as Unit,
             isActive,
         };
-
         try {
             const newProduct = await postProduct(payload);
             if (newProduct && newProduct.data) {
-                onSuccess(newProduct.data); 
-                resetForm(); 
-                setIsOpen(false); 
+                // Call onSuccess with the newly added product
+                onSuccess(newProduct.data);
+                resetForm();
+                onClose();
             }
         } catch (error) {
+            // Log error details if posting fails
             if (error instanceof Error) {
                 console.error(
-                    "Erreur lors de l'ajout du produit",
+                    "Error adding product",
                     (error as any)?.response?.data || error.message
                 );
             } else {
-                console.error("Erreur lors de l'ajout du produit", error);
+                console.error("Error adding product", error);
             }
         }
     };
 
-    if (!isOpen) {
-        return (
-            <button
-                className="bg-blue-600 text-white p-2 rounded"
-                onClick={() => setIsOpen(true)}
-            >
-                Ajouter un produit
-            </button>
-        );
-    }
+    // Do not render the modal if it is not open
+    if (!open) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-auto">
-                <h2 className="text-xl font-bold mb-4">
-                    Ajouter un Produit
-                </h2>
+                {/* Modal Header */}
+                <h2 className="text-xl font-bold mb-4">Ajouter un Produit</h2>
                 <form onSubmit={handleSubmit}>
+                    {/* Product Name Field */}
                     <div className="mb-4">
                         <label className="block">Nom du produit</label>
                         <input
                             type="text"
                             className="w-full p-2 border border-gray-300 rounded"
                             value={productName}
-                            onChange={(e) =>
-                                setProductName(e.target.value)
-                            }
+                            onChange={(e) => setProductName(e.target.value)}
                             required
                         />
                     </div>
-
+                    {/* Description Field */}
                     <div className="mb-4">
                         <label className="block">Description</label>
                         <textarea
                             className="w-full p-2 border border-gray-300 rounded"
                             value={description}
-                            onChange={(e) =>
-                                setDescription(e.target.value)
-                            }
+                            onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
-
+                    {/* Category Field */}
                     <div className="mb-4">
                         <label className="block">Catégorie</label>
                         <select
                             className="w-full p-2 border border-gray-300 rounded"
                             value={categoryId}
-                            onChange={(e) =>
-                                setCategoryId(e.target.value)
-                            }
+                            onChange={(e) => setCategoryId(e.target.value)}
                             required
                         >
-                            <option value="">
-                                Sélectionner une catégorie
-                            </option>
+                            <option value="">Sélectionner une catégorie</option>
                             {categories.map((category) => (
-                                <option
-                                    key={category.id}
-                                    value={category.id}
-                                >
+                                <option key={category.id} value={category.id}>
                                     {category.name}
                                 </option>
                             ))}
                         </select>
                     </div>
-
+                    {/* Subcategory Field */}
                     <div className="mb-4">
                         <label className="block">Sous-catégorie</label>
                         <select
@@ -174,9 +155,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
                             required
                             disabled={!categoryId}
                         >
-                            <option value="">
-                                Sélectionner une sous-catégorie
-                            </option>
+                            <option value="">Sélectionner une sous-catégorie</option>
                             {subcategories
                                 .filter((subcategory) => String(subcategory.categoryId) === categoryId)
                                 .map((subcategory) => (
@@ -186,37 +165,30 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
                                 ))}
                         </select>
                     </div>
-
+                    {/* Producer Field */}
                     <div className="mb-4">
                         <label className="block">Producteur</label>
                         <select
                             className="w-full p-2 border border-gray-300 rounded"
                             value={producerId}
-                            onChange={(e) =>
-                                setProducerId(e.target.value)
-                            }
+                            onChange={(e) => setProducerId(e.target.value)}
                             required
                         >
-                            <option value="">
-                                Sélectionner un producteur
-                            </option>
+                            <option value="">Sélectionner un producteur</option>
                             {producers.map((producer) => (
-                                <option
-                                    key={producer.id}
-                                    value={producer.id}
-                                >
+                                <option key={producer.id} value={producer.id}>
                                     {producer.name}
                                 </option>
                             ))}
                         </select>
                     </div>
-
+                    {/* Unit Field */}
                     <div className="mb-4">
                         <label className="block">Unité</label>
                         <select
                             className="w-full p-2 border border-gray-300 rounded"
                             value={unit}
-                            onChange={(e) => setUnit(e.target.value)}
+                            onChange={(e) => setUnit(e.target.value as Unit)}
                             required
                         >
                             <option value="KG">KG</option>
@@ -224,18 +196,16 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
                             <option value="UN">UN</option>
                         </select>
                     </div>
-
+                    {/* Active Checkbox */}
                     <div className="mb-4 flex items-center gap-2">
                         <label className="block mb-0">Actif</label>
                         <input
                             type="checkbox"
                             checked={isActive}
-                            onChange={(e) =>
-                                setIsActive(e.target.checked)
-                            }
+                            onChange={(e) => setIsActive(e.target.checked)}
                         />
                     </div>
-
+                    {/* Modal Action Buttons */}
                     <div className="flex justify-center gap-2 mt-4">
                         <button
                             type="submit"
@@ -246,7 +216,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
                         <button
                             type="button"
                             className="bg-gray-300 text-black p-2 rounded"
-                            onClick={() => setIsOpen(false)}
+                            onClick={onClose}
                         >
                             Fermer
                         </button>
@@ -256,5 +226,3 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onSuccess }) => {
         </div>
     );
 }
-
-export default AddProductModal;

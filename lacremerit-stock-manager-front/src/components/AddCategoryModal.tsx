@@ -18,8 +18,8 @@ export default function AddCategoryModal({
         e.preventDefault();
         setError(null);
         setLoading(true);
-
         try {
+            // Check if the category already exists
             const res = await getAllCategories();
             const exists = res?.data?.some(
                 (cat: { name: string }) =>
@@ -27,17 +27,17 @@ export default function AddCategoryModal({
             );
             if (exists) {
                 setError("Cette catégorie existe déjà.");
-                setLoading(false);
                 return;
             }
 
+            // Add the new category
             await postCategory({ name: name.trim() });
             setName("");
-            setLoading(false);
             if (onSuccess) onSuccess();
             onClose();
         } catch (err) {
             setError("Erreur lors de l'ajout de la catégorie.");
+        } finally {
             setLoading(false);
         }
     };

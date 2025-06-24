@@ -1,45 +1,21 @@
-import axios from "axios";
 import { useApi } from "../hooks/useApi";
 
 const api = useApi();
 
+export type Unit = "KG" | "L" | "UN";
+
 export interface Product {
     id: number;
     name: string;
-    unit: string;
+    unit: Unit;
     description?: string;
     categoryId?: number; // utilisé pour POST/PATCH
-    category?: { id: number; name: string }; // utilisé pour GET/affichage
+    category?: { id: number; name: string }; // utilisé pour GET
     subcategoryId?: number; // utilisé pour POST/PATCH
-    subcategory?: { id: number; name: string }; // utilisé pour GET/affichage
+    subcategory?: { id: number; name: string }; // utilisé pour GET
     producerId?: number; // utilisé pour POST/PATCH
-    producer?: { id: number; name: string }; // utilisé pour GET/affichage
+    producer?: { id: number; name: string }; // utilisé pour GET
     isActive?: boolean;
-}
-
-export async function fetchLowStockProducts(): Promise<Product[]> {
-    try {
-        const response = await axios.get("/api/products/ruptures");
-
-        if (Array.isArray(response.data)) {
-            return response.data;
-        } else if (
-            response.data &&
-            typeof response.data === "object" &&
-            Array.isArray(response.data.data)
-        ) {
-            return response.data.data;
-        } else {
-            console.error("Format inattendu :", response.data);
-            return [];
-        }
-    } catch (error) {
-        console.error(
-            "Erreur lors de la récupération des produits en rupture :",
-            error
-        );
-        return [];
-    }
 }
 
 export async function getProduct(id: number) {
