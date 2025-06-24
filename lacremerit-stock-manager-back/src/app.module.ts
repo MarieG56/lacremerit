@@ -8,9 +8,13 @@ import { ProductsModule } from './products/products.module';
 import { ProducersModule } from './producers/producers.module';
 import { ProductHistoryModule } from './product_history/product_history.module';
 import { PrismaModule } from 'prisma/prisma.module';
+import { OrderModule } from './order/order.module';
+import { CustomerModule } from './customer/customer.module';
+import { OrderItemModule } from './order-item/order-item.module';
+import { ClientModule } from './client/client.module';
 
 @Module({
-  imports: [CategoriesModule, SubcategoriesModule, ProductsModule, ProducersModule, ProductHistoryModule, PrismaModule],
+  imports: [CategoriesModule, SubcategoriesModule, ProductsModule, ProducersModule, ProductHistoryModule, PrismaModule, OrderModule, CustomerModule, OrderItemModule, ClientModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

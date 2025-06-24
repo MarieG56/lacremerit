@@ -169,6 +169,34 @@ exports.Prisma.ProductHistoryScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.CustomerScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  address: 'address',
+  email: 'email',
+  phoneNumber: 'phoneNumber',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  orderDate: 'orderDate',
+  status: 'status',
+  totalAmount: 'totalAmount',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -189,12 +217,21 @@ exports.Unit = exports.$Enums.Unit = {
   UN: 'UN'
 };
 
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  PREPARED: 'PREPARED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   Category: 'Category',
   Subcategory: 'Subcategory',
   Producer: 'Producer',
   Product: 'Product',
-  ProductHistory: 'ProductHistory'
+  ProductHistory: 'ProductHistory',
+  Customer: 'Customer',
+  Order: 'Order',
+  OrderItem: 'OrderItem'
 };
 
 /**
