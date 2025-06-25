@@ -9,13 +9,14 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String  @unique
-  phoneNumber String?
-  password    String   
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now()) @updatedAt
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  phoneNumber  String?
+  password     String
+  refreshToken String? 
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now()) @updatedAt
 }
 
 model Category {
@@ -72,9 +73,9 @@ model ProductHistory {
   productId        Int
   price            Float?
   weekStartDate    DateTime
-  receivedQuantity Int      @default(0)
-  soldQuantity     Int      @default(0)
-  unsoldQuantity   Int      @default(0)
+  receivedQuantity Float      @default(0)
+  soldQuantity     Float      @default(0)
+  unsoldQuantity   Float      @default(0)
   description      String?
   created_at       DateTime @default(now())
   updated_at       DateTime @default(now()) @updatedAt
@@ -110,7 +111,7 @@ model OrderItem {
   id        Int   @id @default(autoincrement())
   orderId   Int
   productId Int
-  quantity  Int
+  quantity  Float
   unitPrice Float
 
   order     Order    @relation(fields: [orderId], references: [id])

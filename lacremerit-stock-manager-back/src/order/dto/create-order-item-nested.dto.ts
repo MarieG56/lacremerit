@@ -4,7 +4,7 @@ export class CreateOrderItemNestedDto {
   @IsNumber()
   productId: number;
 
-  @IsNumber()
+  @IsNumber({ allowNaN: false, allowInfinity: false, maxDecimalPlaces: 2 })
   quantity: number;
 
   @IsNumber()

@@ -13,9 +13,10 @@ import { CustomerModule } from './customer/customer.module';
 import { OrderItemModule } from './order-item/order-item.module';
 import { ClientModule } from './client/client.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [CategoriesModule, SubcategoriesModule, ProductsModule, ProducersModule, ProductHistoryModule, PrismaModule, OrderModule, CustomerModule, OrderItemModule, ClientModule, UserModule],
+  imports: [CategoriesModule, SubcategoriesModule, ProductsModule, ProducersModule, ProductHistoryModule, PrismaModule, OrderModule, CustomerModule, OrderItemModule, ClientModule, UserModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

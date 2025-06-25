@@ -31,6 +31,14 @@ export class UserService {
     return user;
   }
 
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found.`);
+    }
+    return user;
+  }
+
   async update(id: number, data: UpdateUserDto) {
     await this.findOne(id);
 
@@ -54,16 +62,11 @@ export class UserService {
 
   // Validate the user's credentials by comparing the provided password with the hashed one in the database
   async validateUser(email: string, providedPassword: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new NotFoundException('User not found.');
-    }
-
+    const user = await this.findByEmail(email);
     const isValid = await bcrypt.compare(providedPassword, user.password);
     if (!isValid) {
       throw new UnauthorizedException('Invalid password.');
     }
-
     // Return the user if authentication is successful
     return user;
   }
