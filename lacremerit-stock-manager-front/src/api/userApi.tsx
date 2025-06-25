@@ -1,4 +1,5 @@
 import { useApi } from "../hooks/useApi";
+import { setAccessToken } from "../hooks/useApi"; 
 
 const api = useApi();
 
@@ -61,7 +62,22 @@ export async function deleteUser(id: number) {
 
 export async function loginUser(body: { email: string; password: string }) {
   try {
-    const response = await api.post("/user/login", body);
+    const response = await api.post("/auth/login", body, { withCredentials: true });
+    if (response?.data?.access_token) {
+      setAccessToken(response.data.access_token); 
+    }
+    return response;
+  } catch (error) {
+    console.error("Error", error);
+  }
+}
+
+export async function refreshToken() {
+  try {
+    const response = await api.post("/auth/refresh", {}, { withCredentials: true });
+    if (response?.data?.access_token) {
+      setAccessToken(response.data.access_token);
+    }
     return response;
   } catch (error) {
     console.error("Error", error);

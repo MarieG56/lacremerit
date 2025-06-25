@@ -36,8 +36,12 @@ export default function AddCustomerModal({ open, onClose, onSuccess }: AddCustom
           onSubmit={async (values, { setSubmitting, setStatus, resetForm }) => {
             setStatus(null);
             try {
-              // Submit the customer data after trimming the name field
-              await postCustomer({ ...values, name: values.name.trim() });
+              const payload: Record<string, any> = { name: values.name.trim() };
+              if (values.address) payload.address = values.address;
+              if (values.email) payload.email = values.email;
+              if (values.phoneNumber) payload.phoneNumber = values.phoneNumber;
+
+              await postCustomer(payload);
               onSuccess();
               onClose();
               resetForm();

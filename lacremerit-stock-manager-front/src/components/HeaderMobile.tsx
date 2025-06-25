@@ -1,15 +1,16 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FaBars, FaBox, FaChartBar, FaClipboardList, FaHome, FaIndustry, FaShoppingCart, FaTimes, FaUserFriends } from 'react-icons/fa';
 
 // Static navigation items array
 const navItems = [
-  { icon: <FaHome />, label: "Accueil", href: "/home" },
-  { icon: <FaBox />, label: "Produits", href: "/products" },
-  { icon: <FaUserFriends />, label: "Client·es professionnel·es", href: "/clients" },
-  { icon: <FaIndustry />, label: "Producteurices", href: "/producers" },
-  { icon: <FaChartBar />, label: "Historique", href: "/history" },
-  { icon: <FaClipboardList />, label: "Inventaire", href: "/inventory" },
-  { icon: <FaShoppingCart />, label: "Commandes", href: "/orders" },
+  { icon: <FaHome />, label: "Accueil", to: "/home" },
+  { icon: <FaBox />, label: "Produits", to: "/products" },
+  { icon: <FaUserFriends />, label: "Client·es professionnel·les", to: "/clients" },
+  { icon: <FaIndustry />, label: "Producteurices", to: "/producers" },
+  { icon: <FaChartBar />, label: "Historique", to: "/history" },
+  { icon: <FaClipboardList />, label: "Inventaire", to: "/inventory" },
+  { icon: <FaShoppingCart />, label: "Commandes", to: "/orders" },
 ];
 
 export default function HeaderMobile() {
@@ -32,13 +33,14 @@ export default function HeaderMobile() {
           <hr className="my-3 border-gray-300" /> {/* Divider */}
           <nav className="flex flex-col gap-3">
             {navItems.map((item, index) => (
-              <a
+              <Link
                 key={index}
-                href={item.href}
+                to={item.to}
                 className="text-gray-800 text-base flex items-center gap-2"
+                onClick={() => setIsOpen(false)} // ferme le menu après navigation
               >
                 {item.icon} {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </>

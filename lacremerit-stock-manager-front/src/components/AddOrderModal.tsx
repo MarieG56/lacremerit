@@ -2,12 +2,7 @@ import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { postOrder } from "../api/orderApi";
 import { useState, useEffect } from "react";
-
-type Product = {
-  id: number;
-  name: string;
-  unit: string;
-};
+import { Product } from "../api/productApi";
 
 type AddOrderModalProps = {
   open: boolean;
@@ -26,7 +21,7 @@ const validationSchema = Yup.object().shape({
     .of(
       Yup.object({
         productId: Yup.string().required("Produit requis"),
-        quantity: Yup.number().min(1, "Min 1").required("Quantité requise"),
+        quantity: Yup.number().min(0.01, "Min 0.01").required("Quantité requise"),
         unitPrice: Yup.number().min(0, "Prix requis").required("Prix requis"),
         unit: Yup.string().required("Unité requise"),
       })
@@ -49,6 +44,10 @@ export default function AddOrderModal({
 }: AddOrderModalProps) {
   const [searches, setSearches] = useState<string[]>([]);
   const [isProfessional, setIsProfessional] = useState(defaultProfessional);
+
+  const activeSortedProducts = products
+    .filter((p) => p.isActive)
+    .sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }));
 
   // Set professional mode if defaultProfessional is true when modal opens
   useEffect(() => {
@@ -97,7 +96,7 @@ export default function AddOrderModal({
             try {
               // Calculate total amount for the order
               const totalAmount = values.orderItems.reduce(
-                (sum, item) => sum + item.quantity * item.unitPrice,
+                (sum, item) => sum + parseFloat(String(item.quantity).replace(',', '.')) * Number(item.unitPrice),
                 0
               );
               // Post order using clientId or customerId based on selection
@@ -110,8 +109,8 @@ export default function AddOrderModal({
                 totalAmount,
                 orderItems: values.orderItems.map((item) => ({
                   productId: Number(item.productId),
-                  quantity: item.quantity,
-                  unitPrice: item.unitPrice,
+                  quantity: parseFloat(String(item.quantity).replace(',', '.')), 
+                  unitPrice: Number(item.unitPrice),
                 })),
               });
               resetForm();
@@ -170,11 +169,12 @@ export default function AddOrderModal({
                   <div>
                     <label className="block mb-1 font-semibold">Produits</label>
                     {values.orderItems.map((item, index) => {
-                      const searchValue = searches[index] || "";
-                      const filteredProducts = products.filter((p) =>
-                        p.name.toLowerCase().includes(searchValue.toLowerCase())
-                      );
-                      const selectedProduct = products.find(
+                      const normalizedSearch = (searches[index] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                      const filteredProducts = activeSortedProducts.filter((p) => {
+                        const normalizedName = p.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                        return normalizedName.includes(normalizedSearch);
+                      });
+                      const selectedProduct = activeSortedProducts.find(
                         (p) => p.id === Number(item.productId)
                       );
                       return (
@@ -185,7 +185,7 @@ export default function AddOrderModal({
                               type="text"
                               placeholder="Rechercher un produit..."
                               className="border rounded px-2 py-1 w-full"
-                              value={selectedProduct ? selectedProduct.name : searchValue}
+                              value={selectedProduct ? selectedProduct.name : searches[index] || ""}
                               onChange={(e) => {
                                 const newSearches = [...searches];
                                 newSearches[index] = e.target.value;
@@ -195,7 +195,7 @@ export default function AddOrderModal({
                               }}
                               autoComplete="off"
                             />
-                            {searchValue && !selectedProduct && (
+                            {searches[index] && !selectedProduct && (
                               <div className="absolute bg-white border rounded shadow z-10 max-h-40 overflow-y-auto top-10 left-0 right-0">
                                 {filteredProducts.length === 0 && (
                                   <div className="px-2 py-1 text-gray-400">
@@ -222,11 +222,20 @@ export default function AddOrderModal({
                           </div>
                           {/* Quantity Input */}
                           <Field
-                            type="number"
+                            as="input"
+                            type="text"
+                            inputMode="decimal"
+                            pattern="[0-9]*[.,]?[0-9]*"
                             name={`orderItems.${index}.quantity`}
                             className="border rounded px-2 py-1 w-20"
-                            min={1}
                             placeholder="Qté"
+                            value={values.orderItems[index].quantity}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldValue(
+                                `orderItems.${index}.quantity`,
+                                e.target.value.replace(',', '.')
+                              );
+                            }}
                           />
                           {/* Unit Select */}
                           <Field

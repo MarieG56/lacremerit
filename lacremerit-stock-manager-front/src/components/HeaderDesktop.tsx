@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // importer Link de react-router-dom
 import { FaHome, FaBox, FaIndustry, FaChartBar, FaClipboardList, FaShoppingCart, FaUserFriends } from "react-icons/fa";
 
 // Navigation items with corresponding icons, labels, and links
 const navItems = [
-  { icon: <FaHome />, label: "Accueil", href: "/home" },
-  { icon: <FaBox />, label: "Produits", href: "/products" },
-  { icon: <FaUserFriends />, label: "Client·es professionnel·les", href: "/clients" },
-  { icon: <FaIndustry />, label: "Producteurices", href: "/producers" },
-  { icon: <FaChartBar />, label: "Historique", href: "/history" },
-  { icon: <FaClipboardList />, label: "Inventaire", href: "/inventory" },
-  { icon: <FaShoppingCart />, label: "Commandes", href: "/orders" },
+  { icon: <FaHome />, label: "Accueil", to: "/home" },
+  { icon: <FaBox />, label: "Produits", to: "/products" },
+  { icon: <FaUserFriends />, label: "Client·es professionnel·les", to: "/clients" },
+  { icon: <FaIndustry />, label: "Producteurices", to: "/producers" },
+  { icon: <FaChartBar />, label: "Historique", to: "/history" },
+  { icon: <FaClipboardList />, label: "Inventaire", to: "/inventory" },
+  { icon: <FaShoppingCart />, label: "Commandes", to: "/orders" },
 ];
 
 export default function HeaderDesktop() {
@@ -21,9 +22,7 @@ export default function HeaderDesktop() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    // Add scroll event listener
     window.addEventListener("scroll", handleScroll);
-    // Remove scroll event listener on unmount
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -42,13 +41,13 @@ export default function HeaderDesktop() {
           <h2 className="text-xl font-bold mb-6">La Crème Rit</h2>
           <nav className="flex flex-col gap-4">
             {navItems.map((item, index) => (
-              <a
+              <Link
                 key={index}
-                href={item.href}
+                to={item.to}
                 className="flex items-center gap-2 text-gray-700 hover:text-black font-medium"
               >
                 {item.icon} {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </>
@@ -58,13 +57,13 @@ export default function HeaderDesktop() {
           <h1 className="text-xl font-bold">La Crème Rit</h1>
           <nav className="flex gap-6">
             {navItems.map((item, index) => (
-              <a
+              <Link
                 key={index}
-                href={item.href}
+                to={item.to}
                 className="flex items-center gap-1 text-gray-700 hover:text-black font-medium"
               >
                 {item.icon} {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>

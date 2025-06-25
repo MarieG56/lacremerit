@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loginUser, User } from '../api/userApi';
+import { loginUser, getUser, User } from '../api/userApi';
 
 type LoginModalProps = {
   // onSubmit receives the logged in user for further actions
@@ -18,13 +18,20 @@ export default function LoginModal({ onSubmit }: LoginModalProps) {
     try {
       // Call the login endpoint with the provided credentials
       const response = await loginUser({ email, password });
-      // Assume the endpoint returns the authenticated user in response.data
-      const user: User = response?.data;
-      
-      if (!user) {
+      const accessToken = response?.data?.access_token;
+      const userId = response?.data?.user?.id; 
+
+      if (!accessToken || !userId) {
         throw new Error('Invalid credentials');
       }
-      
+
+      const userResponse = await getUser(userId);
+      const user: User = userResponse?.data;
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
       // If credentials are valid, call onSubmit with the found user
       onSubmit(user);
     } catch (error: any) {

@@ -102,6 +102,19 @@ export default function ProductsPage() {
                 (p) => p.isActive === (tempFilters.isActive === "true")
             );
         }
+        if (tempFilters.searchTerm) {
+            const term = tempFilters.searchTerm
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
+            result = result.filter((p) =>
+                p.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .startsWith(term)
+            );
+        }
         setFiltered(result);
         setFilters(tempFilters);
     };
@@ -130,8 +143,17 @@ export default function ProductsPage() {
             );
         }
         if (tempFilters.searchTerm) {
-            const term = tempFilters.searchTerm.toLowerCase();
-            result = result.filter((p) => p.name.toLowerCase().startsWith(term));
+            const term = tempFilters.searchTerm
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
+            result = result.filter((p) =>
+                p.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .startsWith(term)
+            );
         }
         result = result.sort((a, b) =>
             a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
