@@ -34,18 +34,19 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                         getAllProducers(),
                     ]);
                 // Sort categories alphabetically
-                const sortedCategories = (categoriesRes?.data || []).sort((a: { name: string }, b: { name: string }) =>
-                    a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
+                const sortedCategories = (categoriesRes?.data || []).sort(
+                    (a: { name: string }, b: { name: string }) =>
+                        a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
                 );
                 // Sort producers alphabetically
-                const sortedProducers = (producersRes?.data || []).sort((a: { name: string }, b: { name: string }) =>
-                    a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
+                const sortedProducers = (producersRes?.data || []).sort(
+                    (a: { name: string }, b: { name: string }) =>
+                        a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
                 );
                 setCategories(sortedCategories);
                 setSubcategories(subcategoriesRes?.data || []);
                 setProducers(sortedProducers);
             } catch (error) {
-                // Log error if fetching fails
                 console.error(
                     "Error loading categories, subcategories and producers",
                     error
@@ -81,13 +82,11 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
         try {
             const newProduct = await postProduct(payload);
             if (newProduct && newProduct.data) {
-                // Call onSuccess with the newly added product
                 onSuccess(newProduct.data);
                 resetForm();
                 onClose();
             }
         } catch (error) {
-            // Log error details if posting fails
             if (error instanceof Error) {
                 console.error(
                     "Error adding product",
@@ -99,16 +98,13 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
         }
     };
 
-    // Do not render the modal if it is not open
     if (!open) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-auto">
-                {/* Modal Header */}
                 <h2 className="text-xl font-bold mb-4">Ajouter un Produit</h2>
                 <form onSubmit={handleSubmit}>
-                    {/* Product Name Field */}
                     <div className="mb-4">
                         <label className="block">Nom du produit</label>
                         <input
@@ -119,7 +115,6 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                             required
                         />
                     </div>
-                    {/* Description Field */}
                     <div className="mb-4">
                         <label className="block">Description</label>
                         <textarea
@@ -128,7 +123,6 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                             onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
-                    {/* Category Field */}
                     <div className="mb-4">
                         <label className="block">Catégorie</label>
                         <select
@@ -145,7 +139,6 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                             ))}
                         </select>
                     </div>
-                    {/* Subcategory Field */}
                     <div className="mb-4">
                         <label className="block">Sous-catégorie</label>
                         <select
@@ -158,6 +151,7 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                             <option value="">Sélectionner une sous-catégorie</option>
                             {subcategories
                                 .filter((subcategory) => String(subcategory.categoryId) === categoryId)
+                                .sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }))
                                 .map((subcategory) => (
                                     <option key={subcategory.id} value={subcategory.id}>
                                         {subcategory.name}
@@ -165,7 +159,6 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                                 ))}
                         </select>
                     </div>
-                    {/* Producer Field */}
                     <div className="mb-4">
                         <label className="block">Producteur</label>
                         <select
@@ -182,7 +175,6 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                             ))}
                         </select>
                     </div>
-                    {/* Unit Field */}
                     <div className="mb-4">
                         <label className="block">Unité</label>
                         <select
@@ -196,7 +188,6 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                             <option value="UN">UN</option>
                         </select>
                     </div>
-                    {/* Active Checkbox */}
                     <div className="mb-4 flex items-center gap-2">
                         <label className="block mb-0">Actif</label>
                         <input
@@ -205,7 +196,6 @@ export default function AddProductModal({ open, onClose, onSuccess }: AddProduct
                             onChange={(e) => setIsActive(e.target.checked)}
                         />
                     </div>
-                    {/* Modal Action Buttons */}
                     <div className="flex justify-center gap-2 mt-4">
                         <button
                             type="submit"

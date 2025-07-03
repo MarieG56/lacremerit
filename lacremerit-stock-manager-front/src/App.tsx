@@ -20,6 +20,8 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshError, setRefreshError] = useState(false);
+  // State to control the temporary display of the welcome message
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
 
   useEffect(() => {
     const tryRefresh = async () => {
@@ -58,6 +60,10 @@ function App() {
   const handleLogin = (user: User) => {
     setUser(user);
     setShowLoginModal(false);
+    // Display the welcome message temporarily
+    setShowWelcomeMessage(true);
+    // Hide the message after 5 seconds (5000 ms)
+    setTimeout(() => setShowWelcomeMessage(false), 5000);
   };
 
   if (loading) {
@@ -71,7 +77,7 @@ function App() {
   return (
     <>
       {showLoginModal && <LoginModal onSubmit={handleLogin} />}
-      {/* Affiche un message d'erreur si besoin */}
+      {/* Error message if needed */}
       {refreshError && !showLoginModal && (
         <div className="fixed top-0 left-0 right-0 bg-red-100 text-red-700 text-center py-2 z-50">
           Une erreur inattendue est survenue lors du rafraîchissement de la session.
@@ -85,8 +91,8 @@ function App() {
           <HeaderDesktop />
         </div>
         <main className="flex-1 p-4 pt-5 md:pt-20">
-          {/* Welcome */}
-          {user && (
+          {/* Display the welcome message only if showWelcomeMessage is true */}
+          {user && showWelcomeMessage && (
             <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">
               Bienvenue, {user.name} !
             </div>

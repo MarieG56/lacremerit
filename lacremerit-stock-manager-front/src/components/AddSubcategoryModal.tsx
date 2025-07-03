@@ -18,10 +18,16 @@ export default function AddSubcategoryModal({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch categories when modal is open
+  // Fetch categories when modal is open and sort them alphabetically
   useEffect(() => {
     if (isOpen) {
-      getAllCategories().then(res => setCategories(res?.data || []));
+      getAllCategories().then(res =>
+        setCategories(
+          (res?.data || []).sort((a: { name: string }, b: { name: string }) =>
+            a.name.localeCompare(b.name, "fr", { sensitivity: "base" })
+          )
+        )
+      );
     }
   }, [isOpen]);
 

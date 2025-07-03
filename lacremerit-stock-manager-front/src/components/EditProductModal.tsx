@@ -186,11 +186,13 @@ export default function EditProductModal({
               disabled={loading}
             >
               <option value="">Sélectionner une catégorie</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
+              {[...categories]
+                .sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }))
+                .map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
             </select>
           </div>
           {/* Subcategory Selection Field */}
@@ -206,6 +208,7 @@ export default function EditProductModal({
               <option value="">Sélectionner une sous-catégorie</option>
               {subcategories
                 .filter((sc) => sc.categoryId === form.category?.id)
+                .sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }))
                 .map((sc) => (
                   <option key={sc.id} value={sc.id}>
                     {sc.name}
@@ -224,11 +227,13 @@ export default function EditProductModal({
               disabled={loading}
             >
               <option value="">Sélectionner un producteur</option>
-              {producers.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
+              {[...producers]
+                .sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }))
+                .map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
             </select>
           </div>
           {/* Active Checkbox */}
