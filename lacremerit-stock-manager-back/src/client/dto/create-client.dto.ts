@@ -14,5 +14,5 @@ export class CreateClientDto {
 
   @IsOptional()
   @IsString()
-  phone?: string;
+  phoneNumber?: string;
 }
