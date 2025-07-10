@@ -19,11 +19,10 @@ La Crème Rit Stock Manager is an application designed to manage stock inventori
 
 ## Features
 
-- **User Authentication**: Secure login using JWT with access tokens valid for 15 minutes and refresh tokens valid for 7 days.
-- **Persistent Refresh Token**: Refresh tokens are stored in cookies with a lifespan of 7 days. The cookie is renewed upon login or during token refresh.
 - **Stock Management**: Features include routes and interfaces for managing products, clients, producers, inventories, order histories, and orders.
 - **Responsive UI**: Separate header components for mobile and desktop views ensure a seamless user experience.
 - **Input Validation**: Uses NestJS ValidationPipe on the back-end to validate incoming data.
+- **User Authentication**: Secure login using JWT with access tokens.
 
 ## Architecture & Technologies
 
