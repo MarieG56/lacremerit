@@ -83,3 +83,13 @@ export async function refreshToken() {
     console.error("Error", error);
   }
 }
+
+export async function logoutUser() {
+  try {
+    const response = await api.post("/auth/logout", {}, { withCredentials: true });
+    setAccessToken(null);
+    return response;
+  } catch (error) {
+    console.error("Error", error);
+  }
+}
