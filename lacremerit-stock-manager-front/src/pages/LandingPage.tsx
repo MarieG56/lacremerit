@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { FaBox, FaUsers, FaChartLine, FaShieldAlt, FaMobile, FaDesktop, FaDatabase, FaBell, FaGlobe, FaFacebook } from 'react-icons/fa';
+import { FaBox, FaUsers, FaChartLine, FaBell, FaGlobe, FaFacebook } from 'react-icons/fa';
 import logo from '../assets/pictures/logo.jpg';
 
 interface LandingPageProps {
